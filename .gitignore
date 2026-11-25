@@ -1,0 +1,36 @@
+# UE5 빌드/캐시 폴더 (자동 생성되므로 업로드 불필요)
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Visual Studio 파일
+.vs/
+*.sdf
+*.suo
+*.opensdf
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# 컴파일된 파일
+*.pyc
+*.pyo
+
+# 로그
+*.log
+
+# 크래시 리포트
+CrashReportClient/
+
+# 에디터 임시파일
+*_BuiltData.uasset
+
+# OS 파일
+Thumbs.db
+.DS_Store
+/Project_CPR.sln
+
+# Portfolio repo: engine assets are not included
+Content/

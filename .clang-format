@@ -1,0 +1,32 @@
+# Project_CPR ClangFormat Settings
+# This file ensures that Allman style is enforced across the project.
+
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+
+# Allman Style: Opening braces always on a new line
+BreakBeforeBraces: Allman
+
+# Formatting for specific constructs
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Aligning
+AlignAfterOpenBracket: Align
+AlignOperands: true
+AlignTrailingComments: true
+
+# Pointer/Reference Alignment
+PointerAlignment: Right
+
+# Access Modifier Offset
+AccessModifierOffset: -4
+
+# Space settings
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
