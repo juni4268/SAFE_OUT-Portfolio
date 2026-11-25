@@ -1,79 +1,74 @@
-# SAFE_OUT — 산업 현장 안전사고 대응 게임
+# SAFE OUT
 
-<!-- TODO: 대표 이미지를 Docs/images/cover.png로 넣고 아래 주석을 풀어 주세요 -->
-<!-- ![SAFE_OUT cover](Docs/images/cover.png) -->
+Unreal Engine 5.7로 만든 루프 기반 서바이벌 시뮬레이션 **SAFE OUT**의 게임 코드입니다.
 
-> Unreal Engine 5.7 · C++ · 3인칭 안전 교육 시뮬레이션
+첫 출근한 공장에서 일어나는 안전사고를 모두 막아야 퇴근할 수 있습니다. 화재 종류에 맞는 소화기, 절연 장갑, 안전모처럼 실제 현장의 안전 수칙이 해결 방법입니다.
 
-공장과 창고에서 무작위로 발생하는 화재, 과열, 압력 이상, 낙하물 같은 **산업 안전사고**를 제한 시간 안에 올바른 방법으로 처리해 탈출하는 게임입니다.
-처리 방법이 틀리면(예: 금속 화재에 맞지 않는 소화기를 사용) 사고 원인과 결과를 보여주는 화면과 함께 실패하며, 플레이하면서 안전 수칙을 익히도록 설계했습니다.
+- 영상과 구현 설명: https://juni4268.github.io/safe-out/
+- 이 저장소는 포트폴리오용으로 **코드와 설정만** 공개합니다. 환경, 이펙트 등은 마켓플레이스(Fab) 에셋과 팀원들의 작업물이라 포함하지 않았고, 이 저장소만으로는 에디터에서 프로젝트를 열 수 없습니다.
 
-<!-- TODO: 플레이 영상 링크로 바꿔 주세요 -->
-**▶ 플레이 영상:** [YouTube](https://youtube.com/)
-**⬇ 플레이 빌드 (Windows):** [Releases](../../releases)
+## 개요
 
----
+| | |
+|---|---|
+| 엔진 | Unreal Engine 5.7 · C++ · 블루프린트 |
+| 시점 | 3인칭 |
+| 기간 | 2026년 4월~6월 (3개월) |
+| 인원 | 4인 팀 'H2' |
+| 담당 | 게임 프로그래밍 전체(C++ · 블루프린트), UI 구현 |
 
-## 주요 구현 내용
+## 주요 구현 코드
 
-### 1. 확장 가능한 사고 이벤트 프레임워크 — [`CPREventBase`](Source/Project_CPR/CPREventBase.h)
-- 모든 사고는 하나의 베이스 클래스를 상속하고, 상태 머신(`Idle → Active → Interacting → Resolved / Failed`)으로 관리됩니다.
-- 공통 기능을 베이스에 모았습니다: 제한 시간, 자동 시작 지연, 상호작용 범위, 월드 마커 애니메이션, 실패 연출(사망 몽타주, 결과 이미지와 문구).
-- 각 사고는 `OnStatusChanged`, `OnTimerExpired`, `ReceivePlayerInteraction` 등을 override해서 고유한 규칙만 구현합니다. 그래서 새 사고 유형을 추가하는 비용이 적습니다.
-- `OnEventStatusChanged` 델리게이트로 UI(미션 목록, HUD)와 느슨하게 연결했습니다.
+소개 페이지에서 영상과 함께 설명하는 부분입니다.
 
-### 2. 사고 유형 (10종)
-| 클래스 | 사고 | 핵심 메커니즘 |
-|---|---|---|
-| [`CPREvent_Overheat`](Source/Project_CPR/CPREvent_Overheat.cpp) | 설비 과열 | 오일, 냉각수, 온도 세 가지 수치를 버튼으로 조절해 균형을 맞추는 미니게임 |
-| [`CPREvent_Valve`](Source/Project_CPR/CPREvent_Valve.cpp) | 배관 압력 이상 | 밸브를 돌리는 입력으로 압력을 낮춥니다 |
-| [`CPREvent_Generator`](Source/Project_CPR/CPREvent_Generator.cpp) | 발전기 고장 | 문을 열고 레버를 끝까지 당겨야 하며, 절연 장갑 없이 만지면 감전됩니다 |
-| [`CPREvent_FireElec`](Source/Project_CPR/CPREvent_FireElec.cpp) | 전기 화재 | 맞는 소화기 태그만 진화되고, 시간이 지나면 불이 번집니다 |
-| [`CPREvent_FireLithium`](Source/Project_CPR/CPREvent_FireLithium.cpp) | 리튬(금속) 화재 | D급 금속화재 소화기가 필요합니다 |
-| [`CPREvent_AirCon`](Source/Project_CPR/CPREvent_AirCon.cpp) | 유해 연기 | 연기 농도가 점점 짙어지며, 환기 장치로 제거합니다 |
-| [`CPREvent_ExplosivesZone`](Source/Project_CPR/CPREvent_ExplosivesZone.cpp) | 폭발물 정리 | 맵에 흩어진 폭발물을 안전 구역으로 옮깁니다 |
-| [`CPREvent_HardHat`](Source/Project_CPR/CPREvent_HardHat.cpp) | 낙하물 | 물리 시뮬레이션으로 떨어지는 낙하물에 맞을 때, 안전모를 쓰고 있으면 버티고 아니면 래그돌 처리와 함께 실패합니다 |
-| [`CPREvent_Trap`](Source/Project_CPR/CPREvent_Trap.cpp) | 함정 구역 | 플레이어가 진입하면 사고가 발생합니다 |
-| [`CPREventTimerActor`](Source/Project_CPR/CPREventTimerActor.cpp) | 시간 제한 이벤트 | 일정 시간 뒤에 시작됩니다 |
+| 내용 | 코드 |
+|---|---|
+| 사고 이벤트의 공통 구조: 상태 다섯 가지, 상호작용 조건, 제한 시간 | [`CPREventBase.h`](Source/Project_CPR/CPREventBase.h), [`CPREventBase.cpp`](Source/Project_CPR/CPREventBase.cpp) |
+| 소화기와 화재: 소화할 수 있는 대상의 인터페이스 | [`CPRExtinguishable.h`](Source/Project_CPR/CPRExtinguishable.h) |
+| 소화기와 화재: 소화기 발사 | [`CPRCharacter.cpp`](Source/Project_CPR/CPRCharacter.cpp) |
+| 소화기와 화재: 화재 쪽의 소화기 판정 | [`CPREvent_FireElec.cpp`](Source/Project_CPR/CPREvent_FireElec.cpp) |
+| 기계 과열: 오일·냉각수와 온도 계산 | [`CPREvent_Overheat.cpp`](Source/Project_CPR/CPREvent_Overheat.cpp) |
+| 루프와 퇴근 조건: 퇴근 처리 | [`CPRClearTrigger.cpp`](Source/Project_CPR/CPRClearTrigger.cpp) |
+| 루프와 퇴근 조건: 실패 후 다시 시작 | [`CPRDieUI.cpp`](Source/Project_CPR/CPRDieUI.cpp) |
 
-- [`ICPRExtinguishable`](Source/Project_CPR/CPRExtinguishable.h) 인터페이스로 "소화기로 끌 수 있는 대상"을 추상화하고, 소화기 종류(태그)에 따라 성공과 실패를 판정합니다.
+## 사고 이벤트 8종
 
-### 3. 무작위 사고 배치 — [`CPREventSpawner`](Source/Project_CPR/CPREventSpawner.cpp)
-- 데이터(`EventRoster`)로 사고 종류, 개수, 스폰 포인트 태그, 지연 시간 범위를 지정합니다.
-- 같은 위치가 중복되지 않도록 사용한 위치를 추적하고, 스폰 포인트가 부족하면 가능한 만큼만 생성합니다.
-- 플레이할 때마다 사고 구성이 달라집니다.
+| 사고 | 코드 |
+|---|---|
+| 오일 · 금속 파편 | [`CPREvent_Trap`](Source/Project_CPR/CPREvent_Trap.cpp) |
+| 보일러 압력 상승 | [`CPREvent_Valve`](Source/Project_CPR/CPREvent_Valve.cpp) |
+| 공조기 고장 | [`CPREvent_AirCon`](Source/Project_CPR/CPREvent_AirCon.cpp) |
+| 낙하물 | [`CPREvent_HardHat`](Source/Project_CPR/CPREvent_HardHat.cpp) |
+| 전기 화재 | [`CPREvent_FireElec`](Source/Project_CPR/CPREvent_FireElec.cpp) |
+| 금속 화재 | [`CPREvent_FireLithium`](Source/Project_CPR/CPREvent_FireLithium.cpp) |
+| 누전 차단기 | [`CPREvent_Generator`](Source/Project_CPR/CPREvent_Generator.cpp) |
+| 기계 과열 | [`CPREvent_Overheat`](Source/Project_CPR/CPREvent_Overheat.cpp) |
 
-### 4. 플레이어와 아이템
-- [`CPRActionComponent`](Source/Project_CPR/CPRActionComponent.cpp)는 Enhanced Input 처리를 컴포넌트로 분리해 이동, 달리기, 줍기, 사용, 버리기를 담당합니다. 바라보는 아이템은 하이라이트로 표시합니다.
-- [`UItemData`](Source/Project_CPR/ItemData.h)(`PrimaryDataAsset`)로 아이템 정의를 데이터화해서, 메시, 아이콘, 콜리전을 코드 수정 없이 추가할 수 있습니다.
+## 그 외 코드
 
-### 5. 게임 흐름 / UI
-- [`CPRGameFlowManager`](Source/Project_CPR/CPRGameFlowManager.cpp)는 인트로 컷신이 끝난 뒤에 게임플레이와 이벤트 자동 시작을 엽니다.
-- [`CPRClearTrigger`](Source/Project_CPR/CPRClearTrigger.cpp)는 클리어를 막는 사고가 남아 있는지 확인한 뒤 탈출을 허용합니다.
-- UI 위젯
-  - [`CPRMissionWidget`](Source/Project_CPR/CPRMissionWidget.cpp): 미션 목록
-  - [`CPRHUDWidget`](Source/Project_CPR/CPRHUDWidget.cpp): HUD
-  - [`CPROverheatWidget`](Source/Project_CPR/CPROverheatWidget.cpp): 과열 미니게임 패널
-  - [`CPRDieUI`](Source/Project_CPR/CPRDieUI.cpp): 사고 원인과 결과 화면
-  - [`CPRCutsceneUI`](Source/Project_CPR/CPRCutsceneUI.cpp), [`CPRTitleUI`](Source/Project_CPR/CPRTitleUI.cpp), [`CPRPauseWidget`](Source/Project_CPR/CPRPauseWidget.cpp)
+| 내용 | 위치 |
+|---|---|
+| 이벤트 배치 | [`CPREventSpawner.cpp`](Source/Project_CPR/CPREventSpawner.cpp) |
+| 폭발물 보관 정리(안전 점검 항목) | [`CPREvent_ExplosivesZone.cpp`](Source/Project_CPR/CPREvent_ExplosivesZone.cpp) |
+| 플레이어 입력: 이동, 줍기, 사용, 버리기 | [`CPRActionComponent.cpp`](Source/Project_CPR/CPRActionComponent.cpp) |
+| 아이템과 아이템 데이터 | [`Item.cpp`](Source/Project_CPR/Item.cpp), [`ItemData.h`](Source/Project_CPR/ItemData.h) |
+| 컷신 후 게임 시작 | [`CPRGameFlowManager.cpp`](Source/Project_CPR/CPRGameFlowManager.cpp) |
+| 로딩 화면 | [`CPRGameInstance.cpp`](Source/Project_CPR/CPRGameInstance.cpp) |
+| 안전 점검 목록 | [`CPRMissionWidget.cpp`](Source/Project_CPR/CPRMissionWidget.cpp), [`CPRTodoZoneTrigger.cpp`](Source/Project_CPR/CPRTodoZoneTrigger.cpp) |
+| 기계 상태 화면 | [`CPROverheatWidget.cpp`](Source/Project_CPR/CPROverheatWidget.cpp) |
+| 일시정지, 타이틀, 컷신 화면 | [`CPRPauseWidget.cpp`](Source/Project_CPR/CPRPauseWidget.cpp), [`CPRTitleUI.cpp`](Source/Project_CPR/CPRTitleUI.cpp), [`CPRCutsceneUI.cpp`](Source/Project_CPR/CPRCutsceneUI.cpp) |
 
-<!-- TODO: 팀 프로젝트라면 팀 구성과 본인이 맡은 부분을 적어 주세요 -->
+## 폴더
 
----
+- `Source/Project_CPR` — 게임 코드 (프로젝트의 코드 이름은 Project_CPR입니다)
+- `Config` — 프로젝트 설정
+- `Project_CPR.uproject` — 엔진 버전과 플러그인
 
-## 프로젝트 구조
-```
-Source/Project_CPR/
-├─ CPREventBase.*          사고 이벤트 베이스 (상태 머신, 타이머, 마커, 실패 연출)
-├─ CPREvent_*.*            사고 유형별 구현
-├─ CPREventSpawner.*       무작위 사고 배치
-├─ CPRExtinguishable.h     소화 가능 대상 인터페이스
-├─ CPRCharacter.* / CPRActionComponent.*   플레이어, 입력
-├─ Item.* / ItemData.h     아이템 (DataAsset 기반)
-├─ CPRGameFlowManager.* / CPRClearTrigger.* / CPRTodoZoneTrigger.*   게임 흐름
-└─ CPR*Widget.* / CPR*UI.*  UI
-```
+## 팀
 
-## 참고
-- 이 저장소에는 **코드와 설정만** 포함되어 있습니다. 환경, 이펙트 등은 마켓플레이스(Fab) 에셋을 사용해서 라이선스상 포함하지 않았습니다. 그래서 이 저장소만으로는 에디터에서 프로젝트를 열 수 없으며, 플레이는 Releases의 빌드로 해 주세요.
-- 엔진: Unreal Engine 5.7
+| 이름 | 역할 |
+|---|---|
+| 최준이 | 프로그래밍 |
+| 박정환 | 팀장, 기획 |
+| 이수림 | 레벨 디자인, 시네마틱 |
+| 최지환 | 3D 모델링 |
