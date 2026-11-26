@@ -21,21 +21,29 @@
 
 소개 페이지에서 영상과 함께 설명하는 부분입니다.
 
-**사고 이벤트의 공통 구조**
+### 사고 이벤트의 공통 구조
+
 사고 여덟 가지를 이벤트로 만들었습니다. 공통 기능을 부모 클래스 하나에 모으고, 각 이벤트는 조건과 결과만 다르게 구현했습니다. 이벤트는 대기, 발생, 조작 중, 해결, 실패 다섯 상태를 가집니다.
-→ [`CPREventBase.h`](Source/Project_CPR/CPREventBase.h), [`CPREventBase.cpp`](Source/Project_CPR/CPREventBase.cpp)
 
-**소화기와 화재**
+코드: [`CPREventBase.h`](Source/Project_CPR/CPREventBase.h), [`CPREventBase.cpp`](Source/Project_CPR/CPREventBase.cpp)
+
+### 소화기와 화재
+
 화재는 종류에 맞는 소화기로만 끌 수 있습니다. 소화기는 맞은 대상이 소화할 수 있는 대상인지만 확인하고, 불이 줄어드는 처리는 각 화재가 맡습니다.
-→ [`CPRExtinguishable.h`](Source/Project_CPR/CPRExtinguishable.h), [`CPRCharacter.cpp`](Source/Project_CPR/CPRCharacter.cpp), [`CPREvent_FireElec.cpp`](Source/Project_CPR/CPREvent_FireElec.cpp)
 
-**기계 과열**
+코드: [`CPRExtinguishable.h`](Source/Project_CPR/CPRExtinguishable.h), [`CPRCharacter.cpp`](Source/Project_CPR/CPRCharacter.cpp), [`CPREvent_FireElec.cpp`](Source/Project_CPR/CPREvent_FireElec.cpp)
+
+### 기계 과열
+
 기계는 오일과 냉각수를 계속 소모합니다. 둘 중 하나가 바닥나면 온도가 오르고, 250°C에 닿으면 불이 납니다. 플레이어는 오일과 냉각수를 채워 온도를 내립니다.
-→ [`CPREvent_Overheat.cpp`](Source/Project_CPR/CPREvent_Overheat.cpp)
 
-**루프와 퇴근 조건**
+코드: [`CPREvent_Overheat.cpp`](Source/Project_CPR/CPREvent_Overheat.cpp)
+
+### 루프와 퇴근 조건
+
 사고를 막지 못해 쓰러지면 같은 날 출근부터 다시 시작합니다. 안전 점검 목록의 항목을 모두 끝내야 퇴근할 수 있습니다.
-→ [`CPRClearTrigger.cpp`](Source/Project_CPR/CPRClearTrigger.cpp), [`CPRDieUI.cpp`](Source/Project_CPR/CPRDieUI.cpp)
+
+코드: [`CPRClearTrigger.cpp`](Source/Project_CPR/CPRClearTrigger.cpp), [`CPRDieUI.cpp`](Source/Project_CPR/CPRDieUI.cpp)
 
 ## 조작
 
