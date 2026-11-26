@@ -5,6 +5,7 @@ Unreal Engine 5.7로 만든 루프 기반 서바이벌 시뮬레이션 **SAFE OU
 첫 출근한 공장에서 일어나는 안전사고를 모두 막아야 퇴근할 수 있습니다. 화재 종류에 맞는 소화기, 절연 장갑, 안전모처럼 실제 현장의 안전 수칙이 해결 방법입니다.
 
 - 영상과 구현 설명: https://juni4268.github.io/safe-out/
+- 플레이 빌드 (Windows): [Releases](https://github.com/juni4268/SAFE_OUT-Portfolio/releases/latest)
 - 이 저장소는 포트폴리오용으로 **코드와 설정만** 공개합니다. 환경, 이펙트 등은 마켓플레이스(Fab) 에셋과 팀원들의 작업물이라 포함하지 않았고, 이 저장소만으로는 에디터에서 프로젝트를 열 수 없습니다.
 
 ## 개요
